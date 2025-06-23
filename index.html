@@ -354,10 +354,14 @@
                 flex-direction: column;
                 gap: 0.7rem;
                 padding: 1rem 1.2rem;
+                align-items: center;
             }
             .nav-links {
                 margin-left: 0;
                 gap: 1.2rem;
+                justify-content: center;
+                width: 100%;
+                text-align: center;
             }
             .hero-title {
                 font-size: 1.5rem;
@@ -368,19 +372,46 @@
             }
             .hero-content {
                 padding: 1.2rem 0.7rem;
+                align-items: center;
+                text-align: center;
+                width: 100%;
             }
-            .tools-title {
-                font-size: 1.3rem;
+            .hero-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            .tools-title,
+            .toolbox-title,
+            .tools-header,
+            .tools-subtitle {
+                text-align: center !important;
+                width: 100%;
             }
             .tools-cards-row {
                 gap: 1rem;
                 max-width: 100vw;
+                grid-template-columns: 1fr;
+                justify-items: center;
             }
             .tool-card {
                 width: 98vw;
                 min-width: 0;
                 max-width: 98vw;
                 padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+                align-items: center;
+                text-align: center;
+                margin: 0 auto;
+            }
+            .tool-features {
+                align-items: center;
+                text-align: left;
+                width: 100%;
+                margin-left: 0;
+            }
+            footer {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+                font-size: 1rem;
             }
         }
         footer {
