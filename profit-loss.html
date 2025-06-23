@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit/Loss Statement Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #a259ff;
+            --primary-dark: #7c3aed;
+            --bg: #151617;
+            --surface: #18191a;
+            --surface-card: #202124;
+            --text: #f3f3f3;
+            --text-muted: #b0b3b8;
+            --border: #232324;
+            --button-bg: #a259ff;
+            --button-bg-hover: #7c3aed;
+            --button-text: #fff;
+            --input-bg: #191c1e;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        nav {
+            background: var(--bg);
+            padding: 1.1rem 2.5rem 1.1rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-logo {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1.2px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.08rem;
+            font-weight: 500;
+            transition: color 0.18s;
+            padding: 0.2rem 0.7rem;
+            border-radius: 8px;
+        }
+        .nav-links a:hover {
+            color: var(--primary);
+            background: var(--surface);
+        }
+        .container {
+            background: var(--surface-card);
+            border-radius: 18px;
+            box-shadow: 0 4px 32px rgba(162,89,255,0.10);
+            margin: 2.5rem auto 0 auto;
+            padding: 2.2rem 2rem 2rem 2rem;
+            max-width: 480px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 0;
+            color: #fff;
+            font-size: 2.1rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+        label {
+            font-size: 1.08rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+            margin-top: 1.1rem;
+            display: block;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+        }
+        .input-box, .input-row {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            margin: 0.2rem 0 0.1rem 0;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 1.15rem;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+            outline: none;
+            transition: border 0.18s, background 0.18s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+            border: 1.5px solid var(--primary);
+            background: #202524;
+        }
+        .add-btn, .remove-btn {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: 14px;
+            padding: 0.6rem 1.3rem;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.2rem 0.2rem;
+            transition: background 0.18s, color 0.18s, border 0.18s, transform 0.18s;
+        }
+        .add-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary-dark);
+            transform: translateY(-2px) scale(1.03);
+        }
+        .remove-btn {
+            background: #ff4d4f;
+            color: #fff;
+            border: 1.5px solid #ff4d4f;
+        }
+        .remove-btn:hover {
+            background: #ff6d6f;
+            border-color: #ff6d6f;
+        }
+        .calc-btn, .pdf-btn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 16px;
+            padding: 1rem 0;
+            font-size: 1.18rem;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1.2rem;
+            transition: background 0.18s, color 0.18s, border 0.18s, transform 0.18s;
+            outline: none;
+            letter-spacing: 0.01em;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(162,89,255,0.07);
+        }
+        .calc-btn:hover, .pdf-btn:hover {
+            background: var(--button-bg-hover);
+            color: #fff;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .result {
+            margin-top: 1.7rem;
+            font-size: 1.22rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        .profit {
+            color: var(--primary);
+        }
+        .loss {
+            color: #ff4d4f;
+        }
+        table {
+            width: 100%;
+            margin-top: 1.2rem;
+            border-collapse: collapse;
+            background: var(--surface);
+            color: var(--text);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.5rem;
+            text-align: left;
+        }
+        th {
+            background: #181a1b;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem 0.3rem 1.2rem 0.3rem;
+                max-width: 98vw;
+            }
+            input[type="text"], input[type="number"], input[type="date"] {
+                font-size: 1rem;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+        }
+        footer {
+            background: var(--bg);
+            color: var(--text-muted);
+            text-align: center;
+            padding: 1.5rem 0 1.7rem 0;
+            font-size: 1.08rem;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+        footer button {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: 14px;
+            padding: 0.5rem 1.3rem;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.7rem;
+            transition: background 0.18s, color 0.18s, border 0.18s;
+        }
+        footer button:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary-dark);
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-logo">thefinancetools</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="tools.html">Tools</a>
+            <a href="about.html">About</a>
+        </div>
+    </nav>>
+    <div class="container">
+        <h2>Profit/Loss Statement Generator</h2>
+        <div class="input-box">
+            <label for="name">Business/Individual Name:</label>
+            <input type="text" id="name" placeholder="Enter name">
+        </div>
+        <div class="input-box">
+            <label for="statement-date">Statement Date:</label>
+            <input type="date" id="statement-date">
+        </div>
+        <div style="width:100%;margin-top:1.2rem;">
+            <strong style="color:var(--primary);font-size:1.1rem;">Revenues</strong>
+            <div id="revenues"></div>
+            <button class="add-btn" onclick="addRevenue()">+ Add Revenue</button>
+        </div>
+        <div style="width:100%;margin-top:1.2rem;">
+            <strong style="color:var(--primary-dark);font-size:1.1rem;">Expenses</strong>
+            <div id="expenses"></div>
+            <button class="add-btn" onclick="addExpense()">+ Add Expense</button>
+        </div>
+        <button class="calc-btn" onclick="calculate()">Calculate Profit/Loss</button>
+        <div class="result" id="result"></div>
+        <button class="pdf-btn" onclick="downloadPDF()">Download Statement as PDF</button>
+        <div id="statement-table"></div>
+    </div>
+    <footer>
+        Made by Sahat Ahmed, Accounting & Finance student @ Aston University.
+        <br>
+        Find me on LinkedIn
+        <a href="https://www.linkedin.com/in/sahat-ahmed-67baa6307/" target="_blank" rel="noopener" style="display:inline-block; margin-left: 0.7rem;">
+            <button>LinkedIn</button>
+        </a>
+    </footer>
+    <script>
+        let revenueCount = 0, expenseCount = 0;
+        let revenues = [], expenses = [];
+
+        function addRevenue(name = '', value = '') {
+            const id = revenueCount++;
+            const div = document.createElement('div');
+            div.className = 'input-row';
+            div.id = 'revenue-' + id;
+            div.innerHTML = `
+                <input type="text" placeholder="Revenue name" value="${name}">
+                <input type="number" placeholder="Amount (£)" value="${value}" min="0" step="0.01">
+                <button class="remove-btn" onclick="removeRevenue(${id})">-</button>
+            `;
+            document.getElementById('revenues').appendChild(div);
+        }
+        function removeRevenue(id) {
+            const el = document.getElementById('revenue-' + id);
+            if (el) el.remove();
+        }
+        function addExpense(name = '', value = '') {
+            const id = expenseCount++;
+            const div = document.createElement('div');
+            div.className = 'input-row';
+            div.id = 'expense-' + id;
+            div.innerHTML = `
+                <input type="text" placeholder="Expense name" value="${name}">
+                <input type="number" placeholder="Amount (£)" value="${value}" min="0" step="0.01">
+                <button class="remove-btn" onclick="removeExpense(${id})">-</button>
+            `;
+            document.getElementById('expenses').appendChild(div);
+        }
+        function removeExpense(id) {
+            const el = document.getElementById('expense-' + id);
+            if (el) el.remove();
+        }
+
+        // Add one revenue and one expense by default
+        window.onload = function() {
+            addRevenue();
+            addExpense();
+        };
+
+        function calculate() {
+            revenues = [];
+            expenses = [];
+            document.querySelectorAll('#revenues > .input-row').forEach(div => {
+                const [name, value] = div.querySelectorAll('input');
+                if (name.value && value.value) {
+                    revenues.push({ name: name.value, value: parseFloat(value.value) });
+                }
+            });
+            document.querySelectorAll('#expenses > .input-row').forEach(div => {
+                const [name, value] = div.querySelectorAll('input');
+                if (name.value && value.value) {
+                    expenses.push({ name: name.value, value: parseFloat(value.value) });
+                }
+            });
+            const totalRevenue = revenues.reduce((sum, r) => sum + r.value, 0);
+            const totalExpense = expenses.reduce((sum, e) => sum + e.value, 0);
+            const net = totalRevenue - totalExpense;
+            let resultDiv = document.getElementById('result');
+            let statementTable = document.getElementById('statement-table');
+            let profitOrLoss = net >= 0 ? 'profit' : 'loss';
+            let profitOrLossText = net >= 0 ? 'Profit' : 'Loss';
+            resultDiv.innerHTML = `Net ${profitOrLossText}: <span class="${profitOrLoss}">£${net.toFixed(2)}</span>`;
+            // Build statement table
+            let html = `<table>
+                <tr><th colspan="2">Revenues</th></tr>`;
+            revenues.forEach(r => {
+                html += `<tr><td>${r.name}</td><td>£${r.value.toFixed(2)}</td></tr>`;
+            });
+            html += `<tr><th>Total Revenue</th><th>£${totalRevenue.toFixed(2)}</th></tr>`;
+            html += `<tr><th colspan="2">Expenses</th></tr>`;
+            expenses.forEach(e => {
+                html += `<tr><td>${e.name}</td><td>£${e.value.toFixed(2)}</td></tr>`;
+            });
+            html += `<tr><th>Total Expenses</th><th>£${totalExpense.toFixed(2)}</th></tr>`;
+            html += `<tr><th>Net ${profitOrLossText}</th><th class="${profitOrLoss}">£${net.toFixed(2)}</th></tr>`;
+            html += `</table>`;
+            statementTable.innerHTML = html;
+        }
+
+        function downloadPDF() {
+            calculate(); // Ensure latest calculation
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const name = document.getElementById('name').value || 'Business_Individual';
+            const date = document.getElementById('statement-date').value || new Date().toISOString().slice(0,10);
+            let y = 15;
+            doc.setFontSize(16);
+            doc.text(`${name} - Profit/Loss Statement`, 10, y);
+            y += 8;
+            doc.setFontSize(11);
+            doc.text(`Date: ${date}`, 10, y);
+            y += 7;
+            doc.setFontSize(12);
+            doc.text('Revenues:', 10, y);
+            y += 7;
+            revenues.forEach(r => {
+                doc.text(`${r.name}: £${r.value.toFixed(2)}`, 14, y);
+                y += 7;
+            });
+            const totalRevenue = revenues.reduce((sum, r) => sum + r.value, 0);
+            doc.text(`Total Revenue: £${totalRevenue.toFixed(2)}`, 14, y);
+            y += 10;
+            doc.text('Expenses:', 10, y);
+            y += 7;
+            expenses.forEach(e => {
+                doc.text(`${e.name}: £${e.value.toFixed(2)}`, 14, y);
+                y += 7;
+            });
+            const totalExpense = expenses.reduce((sum, e) => sum + e.value, 0);
+            doc.text(`Total Expenses: £${totalExpense.toFixed(2)}`, 14, y);
+            y += 10;
+            const net = totalRevenue - totalExpense;
+            let profitOrLossText = net >= 0 ? 'Profit' : 'Loss';
+            doc.setFontSize(14);
+            doc.setTextColor(net >= 0 ? 162 : 255, net >= 0 ? 89 : 77, net >= 0 ? 255 : 79); // purple or red
+            doc.text(`Net ${profitOrLossText}: £${net.toFixed(2)}`, 10, y);
+            // Clean file name
+            const fileName = `${name.replace(/\s+/g, '_')}_${date}_Profit_Loss_Statement.pdf`;
+            doc.save(fileName);
+        }
+    </script>
+</body>
+</html>

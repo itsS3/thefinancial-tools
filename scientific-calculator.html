@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #a259ff;
+            --primary-dark: #7c3aed;
+            --bg: #151617;
+            --surface: #18191a;
+            --surface-card: #202124;
+            --text: #f3f3f3;
+            --text-muted: #b0b3b8;
+            --border: #232324;
+            --button-bg: #a259ff;
+            --button-bg-hover: #7c3aed;
+            --button-text: #fff;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        nav {
+            background: var(--bg);
+            padding: 1.1rem 2.5rem 1.1rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-logo {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1.2px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.08rem;
+            font-weight: 500;
+            transition: color 0.18s;
+            padding: 0.2rem 0.7rem;
+            border-radius: 8px;
+        }
+        .nav-links a:hover {
+            color: var(--primary);
+            background: var(--surface);
+        }
+        .center-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+        .calculator-container {
+            background: var(--surface-card);
+            border-radius: 18px;
+            box-shadow: 0 4px 32px rgba(162,89,255,0.10);
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            max-width: 370px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .calc-display {
+            width: 100%;
+            background: var(--surface);
+            color: #fff;
+            font-size: 2.2rem;
+            border: none;
+            border-radius: 10px;
+            padding: 1.1rem 0.7rem;
+            margin-bottom: 1.2rem;
+            text-align: right;
+            box-sizing: border-box;
+            outline: none;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            letter-spacing: 0.04em;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            gap: 0.7rem;
+        }
+        .btn {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: 12px;
+            font-size: 1.18rem;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            font-weight: 700;
+            padding: 1rem 0;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s, border 0.18s, transform 0.18s;
+            box-shadow: none;
+            outline: none;
+        }
+        .btn.op {
+            color: var(--primary-dark);
+        }
+        .btn.equal {
+            background: var(--primary);
+            color: #fff;
+            font-weight: 700;
+            grid-column: span 2;
+            border: 1.5px solid var(--primary-dark);
+        }
+        .btn.clear {
+            color: #ff4d4f;
+            border-color: #ff4d4f;
+        }
+        .btn:hover, .btn:focus {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary-dark);
+            transform: translateY(-2px) scale(1.03);
+        }
+        .row {
+            display: contents;
+        }
+        @media (max-width: 500px) {
+            .calculator-container {
+                padding: 1rem 0.3rem 1.2rem 0.3rem;
+                max-width: 98vw;
+            }
+            .buttons {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            .btn {
+                font-size: 1rem;
+                padding: 0.7rem 0;
+            }
+        }
+        footer {
+            background: var(--bg);
+            color: var(--text-muted);
+            text-align: center;
+            padding: 1.5rem 0 1.7rem 0;
+            font-size: 1.08rem;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+        footer button {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: 14px;
+            padding: 0.5rem 1.3rem;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.7rem;
+            transition: background 0.18s, color 0.18s, border 0.18s;
+        }
+        footer button:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-logo">thefinancetools</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="tools.html">Tools</a>
+            <a href="about.html">About</a>
+        </div>
+    </nav> 
+    <div class="center-wrapper">
+        <div class="calculator-container">
+            <input type="text" class="calc-display" id="display" value="0" readonly>
+            <div class="buttons">
+                <!-- Row 1 -->
+                <button class="btn clear" onclick="clearDisplay()">C</button>
+                <button class="btn" onclick="backspace()">&larr;</button>
+                <button class="btn op" onclick="append('(')">(</button>
+                <button class="btn op" onclick="append(')')">)</button>
+                <button class="btn op" onclick="append('/')">÷</button>
+                <!-- Row 2 -->
+                <button class="btn op" onclick="append('sin(')">sin</button>
+                <button class="btn op" onclick="append('cos(')">cos</button>
+                <button class="btn op" onclick="append('tan(')">tan</button>
+                <button class="btn op" onclick="append('^')">^</button>
+                <button class="btn op" onclick="append('sqrt(')">√</button>
+                <!-- Row 3 -->
+                <button class="btn" onclick="append('7')">7</button>
+                <button class="btn" onclick="append('8')">8</button>
+                <button class="btn" onclick="append('9')">9</button>
+                <button class="btn op" onclick="append('*')">×</button>
+                <button class="btn op" onclick="append('%')">%</button>
+                <!-- Row 4 -->
+                <button class="btn" onclick="append('4')">4</button>
+                <button class="btn" onclick="append('5')">5</button>
+                <button class="btn" onclick="append('6')">6</button>
+                <button class="btn op" onclick="append('-')">−</button>
+                <button class="btn op" onclick="append('log(')">log</button>
+                <!-- Row 5 -->
+                <button class="btn" onclick="append('1')">1</button>
+                <button class="btn" onclick="append('2')">2</button>
+                <button class="btn" onclick="append('3')">3</button>
+                <button class="btn op" onclick="append('+')">+</button>
+                <button class="btn op" onclick="append('ln(')">ln</button>
+                <!-- Row 6 -->
+                <button class="btn" onclick="append('0')">0</button>
+                <button class="btn" onclick="append('.')">.</button>
+                <button class="btn op" onclick="append('pi')">π</button>
+                <button class="btn op" onclick="append('e')">e</button>
+                <button class="btn op" onclick="append('ANS')">ANS</button>
+                <!-- Row 7 (equals spans 2 columns) -->
+                <button class="btn equal" style="grid-column: 4 / span 2;" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        Made by Sahat Ahmed, Accounting & Finance student @ Aston University.
+        <br>
+        Find me on LinkedIn
+        <a href="https://www.linkedin.com/in/sahat-ahmed-67baa6307/" target="_blank" rel="noopener" style="display:inline-block; margin-left: 0.7rem;">
+            <button>LinkedIn</button>
+        </a>
+    </footer>
+    <script>
+        let display = document.getElementById('display');
+        let current = '';
+        let lastAns = '0';
+
+        function append(val) {
+            if (display.value === '0' && !isNaN(val)) {
+                current = '';
+            }
+            if (val === 'pi') val = 'π';
+            if (val === 'e') val = 'e';
+            if (val === 'ANS') val = 'ANS';
+            current += val;
+            display.value = current;
+        }
+
+        function clearDisplay() {
+            current = '';
+            display.value = '0';
+        }
+
+        function backspace() {
+            current = current.slice(0, -1);
+            display.value = current || '0';
+        }
+
+        function calculate() {
+            try {
+                let expr = current;
+
+                // Insert * between ANS and numbers/parentheses, and vice versa
+                expr = expr
+                    .replace(/(\d+|\))\s*ANS/g, '$1*ANS')
+                    .replace(/ANS\s*(\d+|\()/g, 'ANS*$1');
+
+                expr = expr
+                    .replace(/π/g, 'Math.PI')
+                    .replace(/e/g, 'Math.E')
+                    .replace(/sqrt\(/g, 'Math.sqrt(')
+                    .replace(/sin\(/g, 'Math.sin(')
+                    .replace(/cos\(/g, 'Math.cos(')
+                    .replace(/tan\(/g, 'Math.tan(')
+                    .replace(/log\(/g, 'Math.log10(')
+                    .replace(/ln\(/g, 'Math.log(')
+                    .replace(/\^/g, '**')
+                    .replace(/%/g, '/100')
+                    .replace(/ANS/g, lastAns);
+
+                let result = Function('"use strict";return (' + expr + ')')();
+                display.value = result;
+                current = result.toString();
+                lastAns = result.toString();
+            } catch {
+                display.value = 'Error';
+                current = '';
+            }
+        }
+    </script>
+</body>
+</html>
