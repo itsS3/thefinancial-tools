@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Savings Goal Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #a259ff;
+            --primary-dark: #7c3aed;
+            --bg: #151617;
+            --surface: #18191a;
+            --surface-card: #202124;
+            --text: #f3f3f3;
+            --text-muted: #b0b3b8;
+            --border: #232324;
+            --button-bg: #a259ff;
+            --button-bg-hover: #7c3aed;
+            --button-text: #fff;
+            --input-bg: #191c1e;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        nav {
+            background: var(--bg);
+            padding: 1.1rem 2.5rem;
+            border-bottom: 1px solid var(--border);
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .nav-center {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 2.2rem;
+            width: 100%;
+            max-width: 700px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.08rem;
+            font-weight: 500;
+            transition: color 0.18s;
+            padding: 0.2rem 0.7rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .nav-links a:hover {
+            color: var(--primary);
+            background: var(--surface);
+        }
+        .nav-links .toolbox-link {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .nav-logo img:active {
+            animation: logoClick 0.4s cubic-bezier(.4,1.4,.6,1);
+        }
+        @keyframes logoClick {
+            0% { transform: scale(1);}
+            30% { transform: scale(0.88) rotate(-3deg);}
+            60% { transform: scale(1.08) rotate(2deg);}
+            100% { transform: scale(1);}
+        }
+        .container {
+            background: var(--surface-card);
+            border-radius: 18px;
+            box-shadow: 0 4px 32px rgba(162,89,255,0.10);
+            margin: 2.5rem auto 0 auto;
+            padding: 2.2rem 2rem 2rem 2rem;
+            max-width: 430px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 0;
+            color: #fff;
+            font-size: 2.1rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+        label {
+            font-size: 1.08rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+            margin-top: 1.1rem;
+            display: block;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            text-align: center;
+        }
+        .input-box {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            margin: 0.2rem 0 0.1rem 0;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 1.15rem;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+            outline: none;
+            transition: border 0.18s, background 0.18s;
+            text-align: center;
+        }
+        input[type="number"]:focus, input[type="date"]:focus {
+            border: 1.5px solid var(--primary);
+            background: #202524;
+        }
+        .toggle-row {
+            margin-top: 1.1rem;
+            margin-bottom: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+        }
+        .calc-btn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 16px;
+            padding: 1rem 0;
+            font-size: 1.18rem;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1.7rem;
+            transition: background 0.18s, color 0.18s, border 0.18s, transform 0.18s;
+            outline: none;
+            letter-spacing: 0.01em;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(162,89,255,0.07);
+        }
+        .calc-btn:hover, .calc-btn:focus {
+            background: var(--button-bg-hover);
+            color: #fff;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .result-list {
+            margin-top: 1.7rem;
+            font-size: 1.13rem;
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+        }
+        .result-list span {
+            display: inline-block;
+            min-width: 90px;
+        }
+        .section-title {
+            color: var(--primary);
+            font-size: 1.13rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 0.7rem;
+        }
+        @media (max-width: 700px) {
+            nav {
+                padding: 0.7rem 0.2rem;
+            }
+            .nav-center {
+                flex-direction: row;
+                gap: 1.1rem;
+                max-width: 100vw;
+            }
+            .nav-logo img {
+                height: 1.7rem;
+            }
+            .nav-links {
+                gap: 1.1rem;
+            }
+            .nav-links a {
+                font-size: 1rem;
+                padding: 0.2rem 0.5rem;
+            }
+            .container {
+                padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+                max-width: 98vw;
+                margin: 1.2rem auto 0 auto;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+            .result-list {
+                font-size: 1.01rem;
+            }
+        }
+        footer {
+            background: var(--bg);
+            color: var(--text-muted);
+            text-align: center;
+            padding: 1.5rem 0 1.7rem 0;
+            font-size: 1.08rem;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            width: 100%;
+        }
+        footer button {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: 14px;
+            padding: 0.5rem 1.3rem;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.7rem;
+            transition: background 0.18s, color 0.18s, border 0.18s;
+        }
+        footer button:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-center">
+            <a href="index.html" class="nav-logo" style="padding:0;">
+                <img src="tf-t-logo.png" alt="thefinancetools logo" style="height:2.1rem; width:auto; display:block; transition:transform 0.18s;" id="logo-img">
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="tools.html" class="toolbox-link">Toolbox</a>
+                <a href="about.html">About</a>
+            </div>
+        </div>
+    </nav>
+    <script>
+        // Animate logo on click (for keyboard accessibility too)
+        document.addEventListener('DOMContentLoaded', function() {
+            var logo = document.getElementById('logo-img');
+            if (logo) {
+                logo.addEventListener('click', function() {
+                    logo.style.animation = 'logoClick 0.4s cubic-bezier(.4,1.4,.6,1)';
+                    setTimeout(function() {
+                        logo.style.animation = '';
+                    }, 400);
+                });
+                logo.parentElement.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        logo.click();
+                    }
+                });
+            }
+        });
+    </script>
+    <div class="container">
+        <h2>Savings Goal Calculator</h2>
+        <div class="section-title">How long to reach your goal?</div>
+        <form onsubmit="event.preventDefault(); calculateTimeToGoal();">
+            <div class="input-box">
+                <label for="goal1">Total savings goal (£):</label>
+                <input type="number" id="goal1" min="0" step="0.01" placeholder="e.g. 5000" required>
+            </div>
+            <div class="input-box">
+                <label for="monthly1">Monthly savings amount (£):</label>
+                <input type="number" id="monthly1" min="0" step="0.01" placeholder="e.g. 200" required>
+            </div>
+            <div class="input-box">
+                <label for="start-date">Start date <span style="color:var(--text-muted);font-weight:400;">(optional)</span>:</label>
+                <input type="date" id="start-date">
+            </div>
+            <button class="calc-btn" type="submit">Calculate</button>
+        </form>
+        <div class="result-list" id="result-time"></div>
+
+        <div class="section-title">How much to save to reach your goal?</div>
+        <form onsubmit="event.preventDefault(); calculateAmountToSave();">
+            <div class="input-box">
+                <label for="goal2">Total savings goal (£):</label>
+                <input type="number" id="goal2" min="0" step="0.01" placeholder="e.g. 5000" required>
+            </div>
+            <div class="input-box">
+                <label for="duration">Duration:</label>
+                <input type="number" id="duration" min="1" step="1" placeholder="e.g. 12" required>
+                <select id="duration-type" style="margin-top:0.5rem;">
+                    <option value="months">Months</option>
+                    <option value="years">Years</option>
+                </select>
+            </div>
+            <button class="calc-btn" type="submit">Calculate</button>
+        </form>
+        <div class="result-list" id="result-amount"></div>
+    </div>
+    <footer>
+        Made by Sahat Ahmed, Accounting & Finance student @ Aston University.
+        <br>
+        Find me on LinkedIn
+        <a href="https://www.linkedin.com/in/sahat-ahmed-67baa6307/" target="_blank" rel="noopener" style="display:inline-block; margin-left: 0.7rem;">
+            <button>LinkedIn</button>
+        </a>
+    </footer>
+    <script>
+        function calculateTimeToGoal() {
+            const goal = parseFloat(document.getElementById('goal1').value);
+            const monthly = parseFloat(document.getElementById('monthly1').value);
+            const startDate = document.getElementById('start-date').value;
+            const resultDiv = document.getElementById('result-time');
+
+            if (isNaN(goal) || goal <= 0 || isNaN(monthly) || monthly <= 0) {
+                resultDiv.innerHTML = "<span style='color:#ff4d4f;'>Please enter valid values.</span>";
+                return;
+            }
+
+            const months = Math.ceil(goal / monthly);
+            let years = Math.floor(months / 12);
+            let remMonths = months % 12;
+
+            let completionDate = "";
+            if (startDate) {
+                const start = new Date(startDate);
+                start.setMonth(start.getMonth() + months);
+                completionDate = `<div>Estimated completion date: <span style="color:var(--primary);">${start.toLocaleDateString()}</span></div>`;
+            }
+
+            resultDiv.innerHTML = `
+                <div>Time required to reach goal:</div>
+                <div style="color:var(--primary);font-size:1.3rem;margin:0.4rem 0;">
+                    ${years > 0 ? years + " year(s) " : ""}${remMonths} month(s)
+                </div>
+                ${completionDate}
+            `;
+        }
+
+        function calculateAmountToSave() {
+            const goal = parseFloat(document.getElementById('goal2').value);
+            const duration = parseInt(document.getElementById('duration').value);
+            const durationType = document.getElementById('duration-type').value;
+            const resultDiv = document.getElementById('result-amount');
+
+            if (isNaN(goal) || goal <= 0 || isNaN(duration) || duration <= 0) {
+                resultDiv.innerHTML = "<span style='color:#ff4d4f;'>Please enter valid values.</span>";
+                return;
+            }
+
+            let months = durationType === "years" ? duration * 12 : duration;
+            let monthly = goal / months;
+            let yearly = monthly * 12;
+
+            resultDiv.innerHTML = `
+                <div>To reach your goal, you need to save:</div>
+                <div style="color:var(--primary);font-size:1.3rem;margin:0.4rem 0;">
+                    £${monthly.toFixed(2)} per month<br>
+                    (£${yearly.toFixed(2)} per year)
+                </div>
+                <div style="color:var(--text-muted);font-size:0.98rem;">
+                    Over ${months} month(s)
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

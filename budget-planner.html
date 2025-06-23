@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Planner Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #a259ff;
+            --primary-dark: #7c3aed;
+            --bg: #151617;
+            --surface: #18191a;
+            --surface-card: #202124;
+            --text: #f3f3f3;
+            --text-muted: #b0b3b8;
+            --border: #232324;
+            --button-bg: #a259ff;
+            --button-bg-hover: #7c3aed;
+            --button-text: #fff;
+            --input-bg: #191c1e;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        nav {
+            background: var(--bg);
+            padding: 1.1rem 2.5rem;
+            border-bottom: 1px solid var(--border);
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .nav-center {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 2.2rem;
+            width: 100%;
+            max-width: 700px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.08rem;
+            font-weight: 500;
+            transition: color 0.18s;
+            padding: 0.2rem 0.7rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .nav-links a:hover {
+            color: var(--primary);
+            background: var(--surface);
+        }
+        .nav-links .toolbox-link {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .nav-logo img:active {
+            animation: logoClick 0.4s cubic-bezier(.4,1.4,.6,1);
+        }
+        @keyframes logoClick {
+            0% { transform: scale(1);}
+            30% { transform: scale(0.88) rotate(-3deg);}
+            60% { transform: scale(1.08) rotate(2deg);}
+            100% { transform: scale(1);}
+        }
+        .container {
+            background: var(--surface-card);
+            border-radius: 18px;
+            box-shadow: 0 4px 32px rgba(162,89,255,0.10);
+            margin: 2.5rem auto 0 auto;
+            padding: 2.2rem 2rem 2rem 2rem;
+            max-width: 430px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 0;
+            color: #fff;
+            font-size: 2.1rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+        label {
+            font-size: 1.08rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+            margin-top: 1.1rem;
+            display: block;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            text-align: center;
+        }
+        .input-box {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            margin: 0.2rem 0 0.1rem 0;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 1.15rem;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+            outline: none;
+            transition: border 0.18s, background 0.18s;
+            text-align: center;
+        }
+        input[type="number"]:focus {
+            border: 1.5px solid var(--primary);
+            background: #202524;
+        }
+        .percentages-row {
+            display: flex;
+            gap: 0.7rem;
+            justify-content: center;
+            align-items: center;
+            margin-top: 0.7rem;
+            margin-bottom: 0.7rem;
+        }
+        .percentages-row input[type="number"] {
+            width: 3.5rem;
+            padding: 0.4rem 0.2rem;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .toggle-row {
+            margin-top: 1.1rem;
+            margin-bottom: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+        }
+        .calc-btn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 16px;
+            padding: 1rem 0;
+            font-size: 1.18rem;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1.7rem;
+            transition: background 0.18s, color 0.18s, border 0.18s, transform 0.18s;
+            outline: none;
+            letter-spacing: 0.01em;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(162,89,255,0.07);
+        }
+        .calc-btn:hover, .calc-btn:focus {
+            background: var(--button-bg-hover);
+            color: #fff;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .result-list {
+            margin-top: 1.7rem;
+            font-size: 1.13rem;
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+        }
+        .result-list span {
+            display: inline-block;
+            min-width: 90px;
+        }
+        .chart-container {
+            width: 100%;
+            max-width: 320px;
+            margin: 1.2rem auto 0 auto;
+        }
+        @media (max-width: 700px) {
+            nav {
+                padding: 0.7rem 0.2rem;
+            }
+            .nav-center {
+                flex-direction: row;
+                gap: 1.1rem;
+                max-width: 100vw;
+            }
+            .nav-logo img {
+                height: 1.7rem;
+            }
+            .nav-links {
+                gap: 1.1rem;
+            }
+            .nav-links a {
+                font-size: 1rem;
+                padding: 0.2rem 0.5rem;
+            }
+            .container {
+                padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+                max-width: 98vw;
+                margin: 1.2rem auto 0 auto;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+            .result-list {
+                font-size: 1.01rem;
+            }
+        }
+        footer {
+            background: var(--bg);
+            color: var(--text-muted);
+            text-align: center;
+            padding: 1.5rem 0 1.7rem 0;
+            font-size: 1.08rem;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            width: 100%;
+        }
+        footer button {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: 14px;
+            padding: 0.5rem 1.3rem;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.7rem;
+            transition: background 0.18s, color 0.18s, border 0.18s;
+        }
+        footer button:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-center">
+            <a href="index.html" class="nav-logo" style="padding:0;">
+                <img src="tf-t-logo.png" alt="thefinancetools logo" style="height:2.1rem; width:auto; display:block; transition:transform 0.18s;" id="logo-img">
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="tools.html" class="toolbox-link">Toolbox</a>
+                <a href="about.html">About</a>
+            </div>
+        </div>
+    </nav>
+    <script>
+        // Animate logo on click (for keyboard accessibility too)
+        document.addEventListener('DOMContentLoaded', function() {
+            var logo = document.getElementById('logo-img');
+            if (logo) {
+                logo.addEventListener('click', function() {
+                    logo.style.animation = 'logoClick 0.4s cubic-bezier(.4,1.4,.6,1)';
+                    setTimeout(function() {
+                        logo.style.animation = '';
+                    }, 400);
+                });
+                logo.parentElement.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        logo.click();
+                    }
+                });
+            }
+        });
+    </script>
+    <div class="container">
+        <h2>Budget Planner</h2>
+        <form onsubmit="event.preventDefault(); calculateBudget();">
+            <div class="input-box">
+                <label for="income">
+                    Monthly Income
+                    <a href="income.html" style="color:var(--primary-accent);text-decoration:underline;cursor:pointer;font-size:0.98em;" title="Calculate your net income">(after tax and deductions)</a>
+                    (£):
+                </label>
+                <input type="number" id="income" min="0" step="0.01" placeholder="Enter your monthly income" required>
+            </div>
+            <div class="toggle-row">
+                <input type="checkbox" id="custom-split" onchange="toggleCustomSplit()">
+                <label for="custom-split" style="margin:0;">Custom percentage split</label>
+            </div>
+            <div class="percentages-row" id="percentages-row" style="display:none;">
+                <label>Needs <input type="number" id="needs-pct" min="0" max="100" value="50" disabled> %</label>
+                <label>Wants <input type="number" id="wants-pct" min="0" max="100" value="30" disabled> %</label>
+                <label>Savings <input type="number" id="savings-pct" min="0" max="100" value="20" disabled> %</label>
+            </div>
+            <button class="calc-btn" type="submit">Calculate</button>
+        </form>
+        <div class="result-list" id="result-list"></div>
+        <div class="chart-container">
+            <canvas id="budgetChart"></canvas>
+        </div>
+    </div>
+    <footer>
+        Made by Sahat Ahmed, Accounting & Finance student @ Aston University.
+        <br>
+        Find me on LinkedIn
+        <a href="https://www.linkedin.com/in/sahat-ahmed-67baa6307/" target="_blank" rel="noopener" style="display:inline-block; margin-left: 0.7rem;">
+            <button>LinkedIn</button>
+        </a>
+    </footer>
+    <script>
+        let chart;
+
+        function toggleCustomSplit() {
+            const checked = document.getElementById('custom-split').checked;
+            document.getElementById('percentages-row').style.display = checked ? 'flex' : 'none';
+            document.getElementById('needs-pct').disabled = !checked;
+            document.getElementById('wants-pct').disabled = !checked;
+            document.getElementById('savings-pct').disabled = !checked;
+        }
+
+        function calculateBudget() {
+            const income = parseFloat(document.getElementById('income').value);
+            const custom = document.getElementById('custom-split').checked;
+            let needsPct = 50, wantsPct = 30, savingsPct = 20;
+
+            if (custom) {
+                needsPct = parseFloat(document.getElementById('needs-pct').value) || 0;
+                wantsPct = parseFloat(document.getElementById('wants-pct').value) || 0;
+                savingsPct = parseFloat(document.getElementById('savings-pct').value) || 0;
+                if (needsPct + wantsPct + savingsPct !== 100) {
+                    document.getElementById('result-list').innerHTML = "<span style='color:#ff4d4f;'>Percentages must add up to 100%.</span>";
+                    updateChart([0,0,0]);
+                    return;
+                }
+            }
+
+            const needs = income * needsPct / 100;
+            const wants = income * wantsPct / 100;
+            const savings = income * savingsPct / 100;
+
+            document.getElementById('result-list').innerHTML = `
+                <div><span style="color:var(--primary);">Needs:</span> <span>£${needs.toFixed(2)} (${needsPct}%)</span></div>
+                <div><span style="color:var(--primary-dark);">Wants:</span> <span>£${wants.toFixed(2)} (${wantsPct}%)</span></div>
+                <div><span style="color:#ffb347;">Savings:</span> <span>£${savings.toFixed(2)} (${savingsPct}%)</span></div>
+                <div style="margin-top:0.7rem;font-size:0.98rem;color:var(--text-muted);">
+                    <strong>Needs</strong>: rent, groceries, utilities<br>
+                    <strong>Wants</strong>: entertainment, eating out, shopping<br>
+                    <strong>Savings</strong>: emergency fund, investments
+                </div>
+            `;
+            updateChart([needs, wants, savings]);
+        }
+
+        function updateChart(data) {
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Needs', 'Wants', 'Savings'],
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            'rgba(162,89,255,0.85)',
+                            'rgba(124,58,237,0.85)',
+                            'rgba(255,179,71,0.85)'
+                        ],
+                        borderColor: [
+                            'rgba(162,89,255,1)',
+                            'rgba(124,58,237,1)',
+                            'rgba(255,179,71,1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#f3f3f3',
+                                font: { size: 15 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

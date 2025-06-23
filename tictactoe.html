@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #a259ff;
+            --primary-dark: #7c3aed;
+            --bg: #151617;
+            --surface: #18191a;
+            --surface-card: #202124;
+            --text: #f3f3f3;
+            --text-muted: #b0b3b8;
+            --border: #232324;
+            --button-bg: #a259ff;
+            --button-bg-hover: #7c3aed;
+            --button-text: #fff;
+            --input-bg: #191c1e;
+            --win: #3ecf8e;
+            --draw: #ffb347;
+            --lose: #ff4d4f;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        nav {
+            background: var(--bg);
+            padding: 1.1rem 2.5rem;
+            border-bottom: 1px solid var(--border);
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .nav-center {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 2.2rem;
+            width: 100%;
+            max-width: 700px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.08rem;
+            font-weight: 500;
+            transition: color 0.18s;
+            padding: 0.2rem 0.7rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .nav-links a:hover {
+            color: var(--primary);
+            background: var(--surface);
+        }
+        .nav-links .toolbox-link {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .nav-logo img:active {
+            animation: logoClick 0.4s cubic-bezier(.4,1.4,.6,1);
+        }
+        @keyframes logoClick {
+            0% { transform: scale(1);}
+            30% { transform: scale(0.88) rotate(-3deg);}
+            60% { transform: scale(1.08) rotate(2deg);}
+            100% { transform: scale(1);}
+        }
+        .container {
+            background: var(--surface-card);
+            border-radius: 18px;
+            box-shadow: 0 4px 32px rgba(162,89,255,0.10);
+            margin: 2.5rem auto 0 auto;
+            padding: 2.2rem 2rem 2rem 2rem;
+            max-width: 430px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 0;
+            color: #fff;
+            font-size: 2.1rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+        .game-settings {
+            margin-bottom: 1.2rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            margin: 0.2rem 0 0.1rem 0;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 1.15rem;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+            outline: none;
+            transition: border 0.18s, background 0.18s;
+            text-align: center;
+        }
+        select:focus {
+            border: 1.5px solid var(--primary);
+            background: #202524;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            grid-template-rows: repeat(3, 60px);
+            gap: 0.5rem;
+            margin: 1.2rem 0 0.7rem 0;
+            justify-content: center;
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            background: var(--surface);
+            border-radius: 12px;
+            font-size: 2.2rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background 0.18s, color 0.18s;
+            user-select: none;
+        }
+        .cell:hover {
+            background: var(--primary-dark);
+            color: #fff;
+        }
+        .cell.win {
+            background: var(--win);
+            color: #fff;
+        }
+        .cell.draw {
+            background: var(--draw);
+            color: #fff;
+        }
+        .status {
+            font-size: 1.18rem;
+            font-weight: 600;
+            margin-bottom: 1.1rem;
+            min-height: 1.5em;
+        }
+        .status.win {
+            color: var(--win);
+        }
+        .status.lose {
+            color: var(--lose);
+        }
+        .status.draw {
+            color: var(--draw);
+        }
+        .reset-btn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 14px;
+            padding: 0.7rem 1.5rem;
+            font-size: 1.08rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 1.1rem;
+            transition: background 0.18s, color 0.18s, border 0.18s, transform 0.18s;
+            outline: none;
+            letter-spacing: 0.01em;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(162,89,255,0.07);
+        }
+        .reset-btn:hover, .reset-btn:focus {
+            background: var(--button-bg-hover);
+            color: #fff;
+            transform: translateY(-2px) scale(1.03);
+        }
+        @media (max-width: 700px) {
+            .container {
+                padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+                max-width: 98vw;
+                margin: 1.2rem auto 0 auto;
+            }
+            .board {
+                grid-template-columns: repeat(3, 44px);
+                grid-template-rows: repeat(3, 44px);
+                gap: 0.3rem;
+            }
+            .cell {
+                width: 44px;
+                height: 44px;
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+        }
+        footer {
+            background: var(--bg);
+            color: var(--text-muted);
+            text-align: center;
+            padding: 1.5rem 0 1.7rem 0;
+            font-size: 1.08rem;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            width: 100%;
+        }
+        footer button {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: 14px;
+            padding: 0.5rem 1.3rem;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.7rem;
+            transition: background 0.18s, color 0.18s, border 0.18s;
+        }
+        footer button:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-center">
+            <a href="index.html" class="nav-logo" style="padding:0;">
+                <img src="tf-t-logo.png" alt="thefinancetools logo" style="height:2.1rem; width:auto; display:block; transition:transform 0.18s;" id="logo-img">
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="tools.html" class="toolbox-link">Toolbox</a>
+                <a href="about.html">About</a>
+            </div>
+        </div>
+    </nav>
+    <script>
+        // Animate logo on click (for keyboard accessibility too)
+        document.addEventListener('DOMContentLoaded', function() {
+            var logo = document.getElementById('logo-img');
+            if (logo) {
+                logo.addEventListener('click', function() {
+                    logo.style.animation = 'logoClick 0.4s cubic-bezier(.4,1.4,.6,1)';
+                    setTimeout(function() {
+                        logo.style.animation = '';
+                    }, 400);
+                });
+                logo.parentElement.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        logo.click();
+                    }
+                });
+            }
+        });
+    </script>
+    <div class="container">
+        <h2>Tic Tac Toe</h2>
+        <div class="game-settings">
+            <label for="mode">Game mode:</label>
+            <select id="mode" onchange="resetGame()">
+                <option value="cpu">Play vs Computer</option>
+                <option value="2p">2 Player</option>
+            </select>
+        </div>
+        <div class="status" id="status"></div>
+        <div class="board" id="board"></div>
+        <button class="reset-btn" onclick="resetGame()">Reset</button>
+    </div>
+    <footer>
+        Made by Sahat Ahmed, Accounting & Finance student @ Aston University.
+        <br>
+        Find me on LinkedIn
+        <a href="https://www.linkedin.com/in/sahat-ahmed-67baa6307/" target="_blank" rel="noopener" style="display:inline-block; margin-left: 0.7rem;">
+            <button>LinkedIn</button>
+        </a>
+    </footer>
+    <script>
+        let board = Array(9).fill('');
+        let currentPlayer = 'X';
+        let gameOver = false;
+        let mode = 'cpu';
+
+        function renderBoard() {
+            const boardDiv = document.getElementById('board');
+            boardDiv.innerHTML = '';
+            board.forEach((cell, i) => {
+                const cellDiv = document.createElement('div');
+                cellDiv.className = 'cell';
+                cellDiv.textContent = cell;
+                cellDiv.onclick = () => handleMove(i);
+                boardDiv.appendChild(cellDiv);
+            });
+        }
+
+        function handleMove(i) {
+            if (gameOver || board[i]) return;
+            board[i] = currentPlayer;
+            renderBoard();
+            const winInfo = checkWin();
+            if (winInfo) {
+                showStatus(winInfo === 'draw' ? "It's a draw!" : `${winInfo} wins!`, winInfo === 'draw' ? 'draw' : 'win');
+                highlightWin(winInfo);
+                gameOver = true;
+                return;
+            }
+            if (mode === 'cpu' && currentPlayer === 'X') {
+                currentPlayer = 'O';
+                setTimeout(cpuMove, 350);
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                showStatus(`${currentPlayer}'s turn`);
+            }
+        }
+
+        function cpuMove() {
+            if (gameOver) return;
+            // Simple AI: pick random empty cell
+            let empty = board.map((v, i) => v === '' ? i : null).filter(i => i !== null);
+            // Try to win or block
+            let move = findBestMove('O') || findBestMove('X') || empty[Math.floor(Math.random() * empty.length)];
+            board[move] = 'O';
+            renderBoard();
+            const winInfo = checkWin();
+            if (winInfo) {
+                showStatus(winInfo === 'draw' ? "It's a draw!" : `${winInfo} wins!`, winInfo === 'draw' ? 'draw' : (winInfo === 'O' ? 'win' : 'lose'));
+                highlightWin(winInfo);
+                gameOver = true;
+                return;
+            }
+            currentPlayer = 'X';
+            showStatus(`${currentPlayer}'s turn`);
+        }
+
+        function findBestMove(player) {
+            // Try to win/block in one move
+            for (let i = 0; i < 9; i++) {
+                if (!board[i]) {
+                    board[i] = player;
+                    if (checkWin() === player) {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+            return null;
+        }
+
+        function checkWin() {
+            const wins = [
+                [0,1,2],[3,4,5],[6,7,8],
+                [0,3,6],[1,4,7],[2,5,8],
+                [0,4,8],[2,4,6]
+            ];
+            for (let w of wins) {
+                if (board[w[0]] && board[w[0]] === board[w[1]] && board[w[1]] === board[w[2]]) {
+                    return board[w[0]];
+                }
+            }
+            if (board.every(cell => cell)) return 'draw';
+            return null;
+        }
+
+        function highlightWin(winner) {
+            const wins = [
+                [0,1,2],[3,4,5],[6,7,8],
+                [0,3,6],[1,4,7],[2,5,8],
+                [0,4,8],[2,4,6]
+            ];
+            if (winner === 'draw') {
+                document.querySelectorAll('.cell').forEach(cell => cell.classList.add('draw'));
+                return;
+            }
+            for (let w of wins) {
+                if (board[w[0]] && board[w[0]] === board[w[1]] && board[w[1]] === board[w[2]]) {
+                    w.forEach(i => document.querySelectorAll('.cell')[i].classList.add('win'));
+                    break;
+                }
+            }
+        }
+
+        function showStatus(msg, type = '') {
+            const status = document.getElementById('status');
+            status.textContent = msg;
+            status.className = 'status' + (type ? ' ' + type : '');
+        }
+
+        function resetGame() {
+            board = Array(9).fill('');
+            currentPlayer = 'X';
+            gameOver = false;
+            mode = document.getElementById('mode').value;
+            renderBoard();
+            showStatus(`${currentPlayer}'s turn`);
+        }
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', () => {
+            resetGame();
+        });
+    </script>
+</body>
+</html>
