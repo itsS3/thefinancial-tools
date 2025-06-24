@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --card: #16171a;
+            --accent: #a259f7;
+            --accent2: #7c3aed;
+            --text: #f6f8fa;
+            --text-light: #bfc9d1;
+            --danger: #f67280;
+            --danger-dark: #c0392b;
+            --box-shadow: 0 4px 32px rgba(0,0,0,0.32);
+            --border: #23242a;
+        }
+        html, body {
+            height: 100%;
+        }
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            color: var(--text);
+            min-height: 100vh;
+        }
+        header {
+            background: #000;
+            color: var(--accent);
+            padding: 1.5rem 0 1.2rem 0;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        .logo-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            margin-right: 1.2rem;
+            background: #181a1b;
+            object-fit: contain;
+            box-shadow: 0 2px 8px #000a;
+        }
+        .header-title {
+            font-size: 2.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin: 0;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2rem 0;
+        }
+        .dashboard-flex {
+            display: flex;
+            flex-direction: row;
+            gap: 2.5rem;
+            width: 100%;
+            justify-content: center;
+            align-items: flex-start;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .dashboard-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            min-width: 320px;
+            max-width: 350px;
+            flex: 1 1 320px;
+        }
+        .dashboard-center {
+            background: var(--card);
+            border-radius: 22px;
+            box-shadow: var(--box-shadow);
+            padding: 2.2rem 2.5rem;
+            max-width: 500px;
+            min-width: 320px;
+            flex: 2 1 400px;
+            margin-bottom: 2.2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1.5px solid var(--border);
+        }
+        .dashboard-right {
+            min-width: 340px;
+            max-width: 400px;
+            flex: 1 1 340px;
+        }
+        .dashboard-card {
+            background: var(--card);
+            border-radius: 18px;
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem 1.5rem 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1.5px solid var(--border);
+        }
+        .section-title {
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
+            letter-spacing: 0.5px;
+        }
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.05em;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        .form-section label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+        .form-section input, .form-section select {
+            width: 100%;
+            padding: 0.7rem;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            margin-bottom: 1.1rem;
+            font-size: 1rem;
+            background: #101014;
+            color: var(--text);
+            transition: border 0.18s, box-shadow 0.18s;
+        }
+        .form-section input:focus, .form-section select:focus {
+            outline: none;
+            border: 1.5px solid var(--accent);
+            box-shadow: 0 0 0 2px rgba(162,89,247,0.12);
+        }
+        .add-btn, .calc-btn {
+            background: linear-gradient(90deg, var(--accent2) 0%, var(--accent) 100%);
+            color: var(--text);
+            border: none;
+            border-radius: 10px;
+            padding: 0.7rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 1.2rem;
+            transition: background 0.18s, color 0.18s, transform 0.18s, box-shadow 0.18s;
+            box-shadow: 0 2px 8px rgba(162,89,247,0.12);
+        }
+        .add-btn:hover, .add-btn:focus, .calc-btn:hover, .calc-btn:focus {
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent2) 100%);
+            color: #fff;
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 4px 16px rgba(162,89,247,0.18);
+        }
+        .list-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            color: var(--text);
+            background: transparent;
+        }
+        .list-table th, .list-table td {
+            border-bottom: 1px solid var(--border);
+            padding: 0.6rem;
+            text-align: left;
+        }
+        .list-table th {
+            background: #101014;
+            color: var(--accent);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .list-table td button {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 5px 14px;
+            cursor: pointer;
+            font-size: 0.97em;
+            transition: background 0.18s, transform 0.18s;
+        }
+        .list-table td button:hover, .list-table td button:focus {
+            background: var(--danger-dark);
+            transform: scale(1.07);
+        }
+        .scroll-section {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 2rem;
+        }
+        #goal-result {
+            color: var(--accent);
+            font-size: 1.1em;
+            margin-top: 1rem;
+            animation: fadeIn 0.7s;
+        }
+        .analytics-graphs {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            justify-content: center;
+        }
+        .analytics-graph-card {
+            background: var(--card);
+            border-radius: 18px;
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem 1.5rem 1rem 1.5rem;
+            width: 100%;
+            margin-bottom: 2rem;
+            border: 1.5px solid var(--border);
+        }
+        .analytics-graph-card h3 {
+            color: var(--accent);
+            font-size: 1.1em;
+            margin-bottom: 0.7em;
+            font-weight: 600;
+        }
+        @media (max-width: 1200px) {
+            .dashboard-flex {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .dashboard-left, .dashboard-center, .dashboard-right {
+                max-width: 100vw;
+                min-width: 0;
+            }
+            .analytics-graphs {
+                flex-direction: column;
+            }
+        }
+        @media (max-width: 700px) {
+            .dashboard-card, .dashboard-center {
+                padding: 1rem;
+                width: 99%;
+            }
+            .analytics-graph-card {
+                width: 98vw;
+                min-width: 0;
+            }
+            .logo-container {
+                margin-left: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container" style="cursor:pointer;" onclick="window.location.href='index.html'">
+            <img src="tf.t.png" alt="Logo" class="logo-img">
+            <span class="header-title">Dashboard</span>
+        </div>
+    </header>
+    <main>
+        <div class="dashboard-flex">
+            <div class="dashboard-left">
+                <div class="dashboard-card">
+                    <h2 class="section-title">Add Monthly Data</h2>
+                    <div class="form-section">
+                        <label for="entry-type">Choose type to add:</label>
+                        <select id="entry-type" onchange="showEntryForm()">
+                            <option value="income">Income</option>
+                            <option value="expenditure">Expenditure</option>
+                            <option value="savings">Savings</option>
+                        </select>
+                    </div>
+                    <form id="income-form" class="form-section" onsubmit="event.preventDefault();addIncome();" style="display:block;">
+                        <label>Source</label>
+                        <input type="text" id="income-label" placeholder="e.g. Salary, Freelance" required>
+                        <label>Amount (per month)</label>
+                        <input type="number" id="income-amount" placeholder="e.g. 1000" required>
+                        <button type="submit" class="add-btn">+ Add Income</button>
+                    </form>
+                    <form id="expenditure-form" class="form-section" onsubmit="event.preventDefault();addExpenditure();" style="display:none;">
+                        <label>Type</label>
+                        <select id="expenditure-type">
+                            <option>Needs</option>
+                            <option>Wants</option>
+                        </select>
+                        <label>Description</label>
+                        <input type="text" id="expenditure-label" placeholder="e.g. Rent, Groceries" required>
+                        <label>Amount (per month)</label>
+                        <input type="number" id="expenditure-amount" placeholder="e.g. 200" required>
+                        <button type="submit" class="add-btn">+ Add Expenditure</button>
+                    </form>
+                    <form id="savings-form" class="form-section" onsubmit="event.preventDefault();addSavings();" style="display:none;">
+                        <label>Description</label>
+                        <input type="text" id="savings-label" placeholder="e.g. Emergency Fund" required>
+                        <label>Amount (per month)</label>
+                        <input type="number" id="savings-amount" placeholder="e.g. 100" required>
+                        <button type="submit" class="add-btn">+ Add Savings</button>
+                    </form>
+                </div>
+                <div class="dashboard-card scroll-section" id="income-section">
+                    <h2 class="section-title">Monthly Incomes</h2>
+                    <table class="list-table" id="income-table">
+                        <thead>
+                            <tr>
+                                <th>Source</th>
+                                <th>Amount</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="dashboard-card scroll-section" id="expenditure-section">
+                    <h2 class="section-title">Monthly Expenditures</h2>
+                    <table class="list-table" id="expenditure-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="dashboard-card scroll-section" id="savings-section">
+                    <h2 class="section-title">Monthly Savings</h2>
+                    <table class="list-table" id="savings-table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="dashboard-card" id="goals-section">
+                    <h2 class="section-title">Spending & Savings Goals Calculator</h2>
+                    <form id="goal-form" class="form-section" onsubmit="event.preventDefault();calculateGoal();">
+                        <label>Goal Amount</label>
+                        <input type="number" id="goal-amount" placeholder="e.g. 1200" required>
+                        <label>Timeframe (months)</label>
+                        <input type="number" id="goal-months" placeholder="e.g. 6" required>
+                        <button type="submit" class="calc-btn">Calculate</button>
+                    </form>
+                    <div id="goal-result"></div>
+                </div>
+            </div>
+            <div class="dashboard-center">
+                <h2 class="section-title">Spending Pie Chart</h2>
+                <div class="subtitle">All values below are <b>monthly</b> income, expenditure, savings, and leftover.</div>
+                <canvas id="spendingChart" style="max-width: 100%;"></canvas>
+            </div>
+            <div class="dashboard-right">
+                <div class="dashboard-card" id="analytics-section">
+                    <h2 class="section-title">Analytics</h2>
+                    <div class="subtitle">Visualize your monthly income, expenditure, and savings trends.</div>
+                    <div class="analytics-graphs">
+                        <div class="analytics-graph-card">
+                            <h3>Monthly Income Trend</h3>
+                            <canvas id="incomeLineChart"></canvas>
+                        </div>
+                        <div class="analytics-graph-card">
+                            <h3>Monthly Expenditure Trend</h3>
+                            <canvas id="expenditureLineChart"></canvas>
+                        </div>
+                        <div class="analytics-graph-card">
+                            <h3>Monthly Savings Trend</h3>
+                            <canvas id="savingsLineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        function showEntryForm() {
+            document.getElementById('income-form').style.display = 'none';
+            document.getElementById('expenditure-form').style.display = 'none';
+            document.getElementById('savings-form').style.display = 'none';
+            const type = document.getElementById('entry-type').value;
+            if (type === 'income') document.getElementById('income-form').style.display = 'block';
+            if (type === 'expenditure') document.getElementById('expenditure-form').style.display = 'block';
+            if (type === 'savings') document.getElementById('savings-form').style.display = 'block';
+        }
+
+        let incomes = [];
+        let expenditures = [];
+        let savings = [];
+
+        let monthsLabels = [];
+        let incomeHistory = [];
+        let expenditureHistory = [];
+        let savingsHistory = [];
+
+        let chart;
+
+        function updatePieChart() {
+            const needs = expenditures.filter(e => e.type === 'Needs').reduce((a, b) => a + b.amount, 0);
+            const wants = expenditures.filter(e => e.type === 'Wants').reduce((a, b) => a + b.amount, 0);
+            const savingsTotal = savings.reduce((a, b) => a + b.amount, 0);
+            const totalIncome = incomes.reduce((a, b) => a + b.amount, 0);
+            const totalSpent = needs + wants + savingsTotal;
+            const leftover = Math.max(totalIncome - totalSpent, 0);
+
+            let data = [needs, wants, savingsTotal, leftover];
+            let labels = ['Needs', 'Wants', 'Savings', 'Leftover'];
+
+            if (chart) chart.destroy();
+            chart = new Chart(document.getElementById('spendingChart'), {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#a259f7', // Needs
+                            '#7c3aed', // Wants
+                            '#232a2d', // Savings
+                            '#bfc9d1'  // Leftover
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#fff' } }
+                    }
+                }
+            });
+        }
+
+        function updateAllVisuals() {
+            updatePieChart();
+            updateAnalytics();
+        }
+
+        function addIncome() {
+            const label = document.getElementById('income-label').value.trim();
+            const amount = parseFloat(document.getElementById('income-amount').value);
+            if (!label || isNaN(amount) || amount <= 0) return;
+            incomes.push({ label, amount });
+            renderIncomeTable();
+            document.getElementById('income-form').reset();
+            updateAllVisuals();
+        }
+        function removeIncome(index) {
+            incomes.splice(index, 1);
+            renderIncomeTable();
+            updateAllVisuals();
+        }
+        function renderIncomeTable() {
+            const tbody = document.querySelector('#income-table tbody');
+            tbody.innerHTML = '';
+            incomes.forEach((i, idx) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${i.label}</td><td>£${i.amount.toFixed(2)}</td>
+                    <td><button onclick="removeIncome(${idx})">Remove</button></td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+        function addExpenditure() {
+            const type = document.getElementById('expenditure-type').value;
+            const label = document.getElementById('expenditure-label').value.trim();
+            const amount = parseFloat(document.getElementById('expenditure-amount').value);
+            if (!label || isNaN(amount) || amount <= 0) return;
+            expenditures.push({ type, label, amount });
+            renderExpenditureTable();
+            document.getElementById('expenditure-form').reset();
+            updateAllVisuals();
+        }
+        function removeExpenditure(index) {
+            expenditures.splice(index, 1);
+            renderExpenditureTable();
+            updateAllVisuals();
+        }
+        function renderExpenditureTable() {
+            const tbody = document.querySelector('#expenditure-table tbody');
+            tbody.innerHTML = '';
+            expenditures.forEach((e, idx) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${e.type}</td><td>${e.label}</td><td>£${e.amount.toFixed(2)}</td>
+                    <td><button onclick="removeExpenditure(${idx})">Remove</button></td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+        function addSavings() {
+            const label = document.getElementById('savings-label').value.trim();
+            const amount = parseFloat(document.getElementById('savings-amount').value);
+            if (!label || isNaN(amount) || amount <= 0) return;
+            savings.push({ label, amount });
+            renderSavingsTable();
+            document.getElementById('savings-form').reset();
+            updateAllVisuals();
+        }
+        function removeSavings(index) {
+            savings.splice(index, 1);
+            renderSavingsTable();
+            updateAllVisuals();
+        }
+        function renderSavingsTable() {
+            const tbody = document.querySelector('#savings-table tbody');
+            tbody.innerHTML = '';
+            savings.forEach((s, idx) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${s.label}</td><td>£${s.amount.toFixed(2)}</td>
+                    <td><button onclick="removeSavings(${idx})">Remove</button></td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+        function calculateGoal() {
+            const amount = parseFloat(document.getElementById('goal-amount').value);
+            const months = parseInt(document.getElementById('goal-months').value);
+            if (isNaN(amount) || isNaN(months) || amount <= 0 || months <= 0) return;
+            const perMonth = amount / months;
+            const perWeek = amount / (months * 4.345);
+            document.getElementById('goal-result').innerHTML = `
+                <p>To reach <b>£${amount.toFixed(2)}</b> in <b>${months}</b> months:</p>
+                <ul>
+                    <li>Save <b>£${perMonth.toFixed(2)}</b> per month</li>
+                    <li>Save <b>£${perWeek.toFixed(2)}</b> per week</li>
+                </ul>
+            `;
+        }
+
+        let incomeLineChart, expenditureLineChart, savingsLineChart;
+        function updateAnalytics() {
+            if (monthsLabels.length === 0) {
+                const now = new Date();
+                for (let i = 5; i >= 0; i--) {
+                    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                    monthsLabels.push(d.toLocaleString('default', { month: 'short', year: '2-digit' }));
+                }
+            }
+            const totalIncome = incomes.reduce((a, b) => a + b.amount, 0);
+            const totalExpenditure = expenditures.reduce((a, b) => a + b.amount, 0);
+            const totalSavings = savings.reduce((a, b) => a + b.amount, 0);
+            incomeHistory = Array(6).fill(totalIncome);
+            expenditureHistory = Array(6).fill(totalExpenditure);
+            savingsHistory = Array(6).fill(totalSavings);
+
+            if (incomeLineChart) incomeLineChart.destroy();
+            incomeLineChart = new Chart(document.getElementById('incomeLineChart'), {
+                type: 'line',
+                data: {
+                    labels: monthsLabels,
+                    datasets: [{
+                        label: 'Income',
+                        data: incomeHistory,
+                        borderColor: '#a259f7',
+                        backgroundColor: 'rgba(162,89,247,0.08)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#bfc9d1' }, grid: { color: '#232a2d' } },
+                        y: { ticks: { color: '#bfc9d1' }, grid: { color: '#232a2d' } }
+                    }
+                }
+            });
+            if (expenditureLineChart) expenditureLineChart.destroy();
+            expenditureLineChart = new Chart(document.getElementById('expenditureLineChart'), {
+                type: 'line',
+                data: {
+                    labels: monthsLabels,
+                    datasets: [{
+                        label: 'Expenditure',
+                        data: expenditureHistory,
+                        borderColor: '#a259f7',
+                        backgroundColor: 'rgba(162,89,247,0.08)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#bfc9d1' }, grid: { color: '#232a2d' } },
+                        y: { ticks: { color: '#bfc9d1' }, grid: { color: '#232a2d' } }
+                    }
+                }
+            });
+            if (savingsLineChart) savingsLineChart.destroy();
+            savingsLineChart = new Chart(document.getElementById('savingsLineChart'), {
+                type: 'line',
+                data: {
+                    labels: monthsLabels,
+                    datasets: [{
+                        label: 'Savings',
+                        data: savingsHistory,
+                        borderColor: '#7c3aed',
+                        backgroundColor: 'rgba(124,58,237,0.08)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#bfc9d1' }, grid: { color: '#232a2d' } },
+                        y: { ticks: { color: '#bfc9d1' }, grid: { color: '#232a2d' } }
+                    }
+                }
+            });
+        }
+
+        // Initial chart and analytics
+        updateAllVisuals();
+    </script>
+</body>
+</html>
